@@ -47,6 +47,7 @@ public class Controller extends HttpServlet {
         List<Categoria> categorias = null;
         short idCategoria = -1;
         EntityManager em = (EntityManager) session.getAttribute("em");
+        short idJornada = -1;
         if (em == null) {
             em = JPAUtil.getEntityManagerFactory().createEntityManager();
             session.setAttribute("em", em);
