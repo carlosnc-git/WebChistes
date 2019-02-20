@@ -5,6 +5,7 @@
  */
 package servlet;
 
+import entities.Categoria;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -43,17 +44,23 @@ public class Controller extends HttpServlet {
         String op;
         String sql;
         Query query;
+        List<Categoria> categorias = null;
+        short idCategoria = -1;
         EntityManager em = (EntityManager) session.getAttribute("em");
         if (em == null) {
-
             em = JPAUtil.getEntityManagerFactory().createEntityManager();
             session.setAttribute("em", em);
         }
-
         op = request.getParameter("op");
-
         switch (op) {
             case "inicio":
+                sql = "select c from Categoria c";
+                query = em.createQuery(sql);
+                categorias = query.getResultList();
+                session.setAttribute("categorias", categorias);
+                session.setAttribute("idCategoria", idCategoria);
+                dispatcher = request.getRequestDispatcher("home.jsp");
+                dispatcher.forward(request, response);
                 break;
             default:
                 break;
