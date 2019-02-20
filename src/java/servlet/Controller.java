@@ -6,6 +6,7 @@
 package servlet;
 
 import entities.Categoria;
+import entities.Chiste;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -45,6 +46,7 @@ public class Controller extends HttpServlet {
         Query query;
         List<Categoria> categorias = null;
         short idCategoria = -1;
+        List<Chiste> chistes = null;
         EntityManager em = (EntityManager) session.getAttribute("em");
         if (em == null) {
             em = JPAUtil.getEntityManagerFactory().createEntityManager();
@@ -60,6 +62,11 @@ public class Controller extends HttpServlet {
                 session.setAttribute("idCategoria", idCategoria);
                 dispatcher = request.getRequestDispatcher("home.jsp");
                 dispatcher.forward(request, response);
+                break;
+            case "damaCategoria":
+                idCategoria = Short.parseShort(request.getParameter("comboCategoria"));
+                sql = "select c from Chiste c where c.idcategoria=(select ca.id from Categoria ca where ca.id="+idCategoria+")";
+                
                 break;
             default:
                 break;
