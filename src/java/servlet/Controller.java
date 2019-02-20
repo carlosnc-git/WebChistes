@@ -44,7 +44,6 @@ public class Controller extends HttpServlet {
         String sql;
         Query query;
         EntityManager em = (EntityManager) session.getAttribute("em");
-        short idJornada = -1;
         if (em == null) {
 
             em = JPAUtil.getEntityManagerFactory().createEntityManager();
