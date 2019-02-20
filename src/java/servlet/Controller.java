@@ -40,7 +40,6 @@ public class Controller extends HttpServlet {
             throws ServletException, IOException {
         HttpSession session = request.getSession();
         RequestDispatcher dispatcher;
-        
         String op;
         String sql;
         Query query;
