@@ -4,6 +4,7 @@
     Author     : carlos
 --%>
 
+<%@page import="model.ChistePuntuado"%>
 <%@page import="entities.Chiste"%>
 <%@page import="entities.Categoria"%>
 <%@page import="java.util.List"%>
@@ -20,9 +21,10 @@
     </head>
     <%
         List<Categoria> categorias = (List<Categoria>) session.getAttribute("categorias");
-        short idCategoria = (short) session.getAttribute("idCategoria");
-        List<Chiste> chistes = (List<Chiste>) session.getAttribute("chistes");
-
+        Categoria categoriaSeleccionada = (Categoria) session.getAttribute("categoria");
+        categoriaSeleccionada.getChisteList().get(0).getPuntosList().get(0).getPuntos();
+        List<Chiste> chistes = (categoriaSeleccionada!=null)? categoriaSeleccionada.getChisteList():null;
+        //boolean mejores = (boolean) session.getAttribute("mejores");
     %>
     <body>
 
@@ -35,14 +37,14 @@
                 <form class="form-inline" action="Controller?op=dameCategoria" method="post" style="display: inline-block" >
                     <div class="form-group">
                         <select class="custom-select" id="comboCategoria" name="comboCategoria" onchange="this.form.submit()" style="width: 300px">
-                            <%if (idCategoria == -1) {
+                            <%if (categoriaSeleccionada == null) {
                             %>
                             <option selected>Elija Categoria</option>
                             <%} else {%>
                             <option >Elija Categoria</option>
                             <%}
                             for (Categoria categoria : categorias) {%>            
-                                <option <%=(idCategoria == categoria.getId()) ? "selected" : ""%> value="<%=categoria.getId()%>" class="text-danger"><%=categoria.getNombre()%></option>      
+                                <option <%=(categoriaSeleccionada != null && categoriaSeleccionada.getId() == categoria.getId()) ? "selected" : ""%> value="<%=categoria.getId()%>" class="text-danger"><%=categoria.getNombre()%></option>      
                             <%}%>
                         </select>
                     </div>
@@ -52,9 +54,11 @@
             <% if (chistes==null){%>
             <h3 class="sincategoria">Chistes Carlos Navas</h3>
             <%}else {%>
-                <button type="button" class="btn" data-toggle="modal" data-target="#modalNuevoChiste"><img alt="" src="img/add.png" height="35px" width="35px"/></button>
+                <button type="button" class="btn centrado" data-toggle="modal" data-target="#modalNuevoChiste"><img alt="" src="img/add.png" height="35px" width="35px"/></button>
             <div class="chistes">
-                
+                <%for (Chiste chiste: chistes){%>
+                <h4><%=chiste.getTitulo()%> (<%=categoriaSeleccionada.getNombre()%>)</h4>
+                <%}%>
             </div>  
             <%}%>
                         

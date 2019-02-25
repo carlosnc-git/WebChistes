@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import jpautil.JPAUtil;
+import model.ChistePuntuado;
 
 /**
  *
@@ -44,6 +45,7 @@ public class Controller extends HttpServlet {
         String op;
         String sql;
         Query query;
+        String s = "select p.idchiste from Puntos p group by p.idchiste order by avg(p.puntos) DESC";
         List<Categoria> categorias = null;
         short idCategoria = -1;
         List<Chiste> chistes = null;
@@ -59,14 +61,20 @@ public class Controller extends HttpServlet {
                 query = em.createQuery(sql);
                 categorias = query.getResultList();
                 session.setAttribute("categorias", categorias);
-                session.setAttribute("idCategoria", idCategoria);
+                session.setAttribute("categoria", null);
                 dispatcher = request.getRequestDispatcher("home.jsp");
                 dispatcher.forward(request, response);
                 break;
-            case "damaCategoria":
+            case "dameCategoria":
                 idCategoria = Short.parseShort(request.getParameter("comboCategoria"));
-                sql = "select c from Chiste c where c.idcategoria=(select ca.id from Categoria ca where ca.id="+idCategoria+")";
-                
+                session.setAttribute("categoria",em.find(Categoria.class, idCategoria));
+                dispatcher = request.getRequestDispatcher("home.jsp");
+                dispatcher.forward(request, response);
+                break;
+            case "dameMejores":
+                sql = "select p.idchiste from Puntos p group by p.idchiste order by avg(p.puntos) DESC";
+                query = em.createQuery(sql);
+                session.setAttribute("mejoresChistes",query.getResultList());
                 break;
             default:
                 break;
