@@ -130,7 +130,16 @@ public class Chiste implements Serializable {
 
     @Override
     public String toString() {
-        return "entities.Chiste[ id=" + id + " ]";
+        return "Chiste{" + "id=" + id + ", adopo=" + adopo + ", descripcion=" + descripcion + ", titulo=" + titulo + ", puntosList=" + puntosList + ", idcategoria=" + idcategoria + '}';
+    }
+
+    public int getMediaPuntos() {
+        double puntos = 0;
+        for (Puntos p : getPuntosList()) {
+            puntos += p.getPuntos().doubleValue();
+        }
+        puntos /= getPuntosList().size();
+        return (int) puntos;
     }
     
 }

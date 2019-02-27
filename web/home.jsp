@@ -4,6 +4,7 @@
     Author     : carlos
 --%>
 
+<%@page import="java.io.Console"%>
 <%@page import="model.ChistePuntuado"%>
 <%@page import="entities.Chiste"%>
 <%@page import="entities.Categoria"%>
@@ -22,9 +23,14 @@
     <%
         List<Categoria> categorias = (List<Categoria>) session.getAttribute("categorias");
         Categoria categoriaSeleccionada = (Categoria) session.getAttribute("categoria");
-        categoriaSeleccionada.getChisteList().get(0).getPuntosList().get(0).getPuntos();
-        List<Chiste> chistes = (categoriaSeleccionada!=null)? categoriaSeleccionada.getChisteList():null;
-        //boolean mejores = (boolean) session.getAttribute("mejores");
+        boolean mejores = (boolean) session.getAttribute("mejores");
+        List<Chiste> chistes = null;
+        if (mejores){
+            chistes = (List<Chiste>) session.getAttribute("chistes");
+        } else {
+            if (categoriaSeleccionada!=null) chistes = categoriaSeleccionada.getChisteList();
+        }
+        
     %>
     <body>
 
@@ -50,15 +56,32 @@
                     </div>
                 </form>
                 <button type="button" class="btn" data-toggle="modal" data-target="#modalNuevaCategoria" style="display: inline-block"><img alt="" src="img/add.png" height="25px" width="25px"/></button>
+                <%if (!mejores){%>
+                    <a style="display: inline-block" href="Controller?op=dameMejores">Mejores Chistes</a>
+                <%}%>                
             </div>
             <% if (chistes==null){%>
             <h3 class="sincategoria">Chistes Carlos Navas</h3>
             <%}else {%>
                 <button type="button" class="btn centrado" data-toggle="modal" data-target="#modalNuevoChiste"><img alt="" src="img/add.png" height="35px" width="35px"/></button>
-            <div class="chistes">
+                <div class="chistes">
                 <%for (Chiste chiste: chistes){%>
-                <h4><%=chiste.getTitulo()%> (<%=categoriaSeleccionada.getNombre()%>)</h4>
+                <div class="chiste"> 
+                    <h4><%=chiste.getTitulo().toUpperCase()%> (<%=chiste.getIdcategoria().getNombre()%>) - <%=chiste.getAdopo()%> - <%=chiste.getMediaPuntos() %></h4>
+                    <p><%=chiste.getDescripcion()%></p>
+                    
+                    <span class="rating ">
+                        <a href="Controller?op=rating&rating=1&chisteid=<%=chiste.getId()%>">&#9733;</a>
+                        <a href="Controller?op=rating&rating=2&chisteid=<%=chiste.getId()%>">&#9733;</a>
+                        <a href="Controller?op=rating&rating=3&chisteid=<%=chiste.getId()%>">&#9733;</a>
+                        <a href="Controller?op=rating&rating=4&chisteid=<%=chiste.getId()%>">&#9733;</a>
+                        <a href="Controller?op=rating&rating=5&chisteid=<%=chiste.getId()%>">&#9733;</a>
+                    </span>
+                    
+                </div>
                 <%}%>
+                </div>
+            </tbody>
             </div>  
             <%}%>
                         

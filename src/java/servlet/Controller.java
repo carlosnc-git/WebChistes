@@ -7,8 +7,10 @@ package servlet;
 
 import entities.Categoria;
 import entities.Chiste;
+import entities.Puntos;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -44,6 +46,10 @@ public class Controller extends HttpServlet {
         RequestDispatcher dispatcher;
         String op;
         String sql;
+        short rating;
+        short idChiste;
+        Puntos puntos;
+        EntityTransaction transaction;
         Query query;
         String s = "select p.idchiste from Puntos p group by p.idchiste order by avg(p.puntos) DESC";
         List<Categoria> categorias = null;
@@ -62,19 +68,40 @@ public class Controller extends HttpServlet {
                 categorias = query.getResultList();
                 session.setAttribute("categorias", categorias);
                 session.setAttribute("categoria", null);
+                session.setAttribute("mejores",false);
                 dispatcher = request.getRequestDispatcher("home.jsp");
                 dispatcher.forward(request, response);
                 break;
             case "dameCategoria":
                 idCategoria = Short.parseShort(request.getParameter("comboCategoria"));
                 session.setAttribute("categoria",em.find(Categoria.class, idCategoria));
+                session.setAttribute("mejores",false);
                 dispatcher = request.getRequestDispatcher("home.jsp");
                 dispatcher.forward(request, response);
                 break;
             case "dameMejores":
                 sql = "select p.idchiste from Puntos p group by p.idchiste order by avg(p.puntos) DESC";
                 query = em.createQuery(sql);
-                session.setAttribute("mejoresChistes",query.getResultList());
+                session.setAttribute("chistes",query.getResultList());
+                session.setAttribute("mejores",true);
+                session.setAttribute("categoria",null);
+                dispatcher = request.getRequestDispatcher("home.jsp");
+                dispatcher.forward(request, response);
+                break;
+            case "rating":
+                rating = Short.parseShort(request.getParameter("rating"));
+                idChiste = Short.parseShort(request.getParameter("chisteid"));
+                puntos = new Puntos();
+                puntos.setId(3);
+                puntos.setIdchiste(em.find(Chiste.class, idChiste));
+                puntos.setPuntos(new BigDecimal(rating));
+                transaction = em.getTransaction();
+                transaction.begin();
+                em.persist(puntos);
+                transaction.commit();
+                em.getEntityManagerFactory().getCache().evictAll();
+                dispatcher = request.getRequestDispatcher("home.jsp");
+                dispatcher.forward(request, response);
                 break;
             default:
                 break;
